@@ -5,7 +5,7 @@ public class Plateau extends JFrame {
 
     public Plateau() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1400, 1000);
+        setSize(1200, 800);
         setResizable(false);
         setVisible(true);
 
@@ -25,9 +25,9 @@ public class Plateau extends JFrame {
         for (int i = 0; i < 11; i++) {
             add(createLabel(String.valueOf(i)),constraints(i,10,1,1,1,1));
         }
-        add(createLabel(String.valueOf("chance")),constraints(4,1,3,2,0,0));
-        add(createLabel(String.valueOf("TimePoly")),constraints(1,3,9,5,0,0));
-        add(createLabel(String.valueOf("evenement")),constraints(4,8,3,2,0,0));
+        add(createLabel("chance"),constraints(4,1,3,2,0,0));
+        add(createLabel("TimePoly"),constraints(1,3,9,5,0,0));
+        add(createLabel("evenement"),constraints(4,8,3,2,0,0));
 
 
     }
