@@ -19,7 +19,7 @@ public class DrawShap extends JPanel {
         // 设置绘制颜色
         g2d.setColor(color);
 
-        int width = getWidth();;
+        int width = getWidth();
         int height = getHeight();
 
         // 根据颜色和形状参数绘制不同的图形
@@ -34,7 +34,7 @@ public class DrawShap extends JPanel {
             int x = (width - size) / 2;
             int y = (height - size) / 2;
             g2d.fillRect(x, y, size, size);
-        } else if (color.equals(Color.BLUE)) {
+        } else if (color.equals(Color.CYAN)) {
             // 绘制蓝色的圆形
             int diameter = Math.min(width, height) / 2;
             int x = (width - diameter) / 2;

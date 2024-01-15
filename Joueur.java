@@ -4,7 +4,7 @@ import java.util.Map;
 public class Joueur {
     private String playerColor;
     private int playerTime;
-
+    public int tourJeux = 0;
     public int postionActuel = 0;
     public int positionPrecedent = 0;
     Map<Integer, Integer> playerCapital = new HashMap<>();

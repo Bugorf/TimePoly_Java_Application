@@ -6,7 +6,6 @@ import java.util.Map;
 public class Avancer {
     Map<Integer, int[]> posMap = new HashMap<>();
 
-    public int tourJeux = 0;
     public Avancer() {
         initPosMap();
     }
@@ -24,7 +23,7 @@ public class Avancer {
                     al.add(new int[]{1,j});
                 }
             } else if (i == 2) {
-                for (int j = 1; j < 8; j++) {
+                for (int j = 2; j < 8; j++) {
                     al.add(new int[]{j,0});
                 }
             } else {
@@ -51,7 +50,8 @@ public class Avancer {
         } else {
             joueur.positionPrecedent = joueur.postionActuel;
             joueur.postionActuel = joueur.postionActuel + pas - 23;
-            tourJeux += 1;
+            joueur.tourJeux += 1;
+            joueur.setPlayerTime(joueur.getPlayerTime() + 10);
         }
         System.out.println(joueur.postionActuel);
     }

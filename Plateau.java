@@ -26,12 +26,20 @@ public class Plateau extends JFrame {
     public JLabel labelJ3;
     public JLabel labelJ4;
 
+    public JLabel TimelabelJ1;
+    public JLabel TimelabelJ2;
+    public JLabel TimelabelJ3;
+    public JLabel TimelabelJ4;
+
+    public JButton dé;
+
     public void init() {
 
         Container cp = getContentPane();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1400, 800);
         setResizable(false);
+        setTitle("TimePoly");
 
         GridBagLayout bagLayout = new GridBagLayout();
         setLayout(bagLayout);
@@ -48,29 +56,104 @@ public class Plateau extends JFrame {
 
     }
 
-    public void dessinerCase(Container cp) {
-        for (int i = 1; i < 8; i++) {
-            cp.add(createLabel(String.valueOf(i)),constraints(i,0,1,1,1,1));
+    public void verifierCase(Joueur joueur) {
+        int[] tresor = {2,8,14,20};
+        int[] chance = {4,10,16,22};
+
+        if (containsValue(tresor, joueur.postionActuel)) {
+            joueur.setPlayerTime(joueur.getPlayerTime() + new Tresor().getTresor(dé));
+            actualiserTime(joueur);
+        } else if ((containsValue(chance, joueur.postionActuel))){
+            joueur.setPlayerTime(joueur.getPlayerTime() + new Chance().getChance(dé));
+            actualiserTime(joueur);
+        } else if (joueur.postionActuel == 6 || joueur.postionActuel == 12) {
+
+        } else if (joueur.postionActuel == 0) {
+
+        } else if (joueur.postionActuel == 18){
+
+        } else {
+
         }
-        for (int i = 1; i < 6; i++) {
-            cp.add(createLabel(String.valueOf(i)),constraints(1,i,1,1,1,1));
+    }
+
+    public void actualiserTime(Joueur joueur){
+        switch (tour) {
+            case 1:
+                TimelabelJ1.setText("Time: " + joueur.getPlayerTime());
+                break;
+            case 2:
+                TimelabelJ2.setText("Time: " + joueur.getPlayerTime());
+                break;
+            case 3:
+                TimelabelJ3.setText("Time: " + joueur.getPlayerTime());
+                break;
+            case 4:
+                TimelabelJ4.setText("Time: " + joueur.getPlayerTime());
+                break;
         }
 
-        for (int i = 1; i < 6; i++) {
-            cp.add(createLabel(String.valueOf(i)),constraints(7,i,1,1,1,1));
+    }
+    private static boolean containsValue(int[] array, int target) {
+        for (int value : array) {
+            if (value == target) {
+                return true;
+            }
         }
-        for (int i = 1; i < 8; i++) {
-            cp.add(createLabel(String.valueOf(i)),constraints(i,6,1,1,1,1));
+        return false;
+    }
+    public void createImageLabel(Container cp, int[] pos, String path) {
+        ImageIcon imageIcon = new ImageIcon(path);
+        JLabel jLabel = new JLabel(imageIcon);
+        jLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        cp.add(jLabel,constraints(pos[0],pos[1],1,1,1,1));
+    }
+
+    public void dessinerCase(Container cp) {
+        Avancer avancer = new Avancer();
+        avancer.initPosMap();
+        for (int i = 0; i < 24; i++) {
+            if (i == 0) {
+                createImageLabel(cp,avancer.posMap.get(i),"./image/go.png");
+            } else if (i == 6) {
+                createImageLabel(cp,avancer.posMap.get(i),"./image/sun1.png");
+            } else if (i == 12) {
+                createImageLabel(cp,avancer.posMap.get(i),"./image/sun2.png");
+            } else if ( i == 18) {
+                createImageLabel(cp,avancer.posMap.get(i),"./image/ins.png");
+            } else if (i == 2 || i == 8 || i == 14 || i == 20) {
+                createImageLabel(cp,avancer.posMap.get(i),"./image/tresorCase.png");
+            } else if (i == 4 || i == 10 || i == 16 || i == 22) {
+                createImageLabel(cp,avancer.posMap.get(i),"./image/wenhaoCase.png");
+            } else if (i == 1 || i == 5 || i == 7 || i == 11 || i == 13 || i == 19 || i == 17 || i == 23 || i == 3 || i == 9 || i == 15 || i == 21 )  {
+                createImageLabel(cp,avancer.posMap.get(i),"./image/house.png");
+            }
+
         }
+
+
 
         DéMsg = createLabel("");
         cp.add(DéMsg,constraints(4,1,1,2,1,1));
 
         ImageIcon imageIcon = new ImageIcon("./image/wenhao.png");
         JButton chance = new JButton(imageIcon);
+        chance.setBorder(null);
+
+        chance.setBackground(null);
+
+        chance.addActionListener(e ->{
+            new Chance().getChance(dé);
+        });
+
 
         ImageIcon imageIcon2 = new ImageIcon("./image/tresor.png");
         JButton evenement = new JButton(imageIcon2);
+
+        evenement.addActionListener(e ->{
+            new Tresor().getTresor(dé);
+        });
 
         add(chance,constraints(2,2,1,3,0,0));
         add(evenement,constraints(6,2,1,3,0,0));
@@ -107,13 +190,13 @@ public class Plateau extends JFrame {
                 cp.add(createLabel(""),constraints(0,4,1,1,1,1));
 
                  */
-                labelJ1.setBackground(Color.CYAN);
+                labelJ1.setBackground(Color.YELLOW);
                 labelJ2.setBackground(null);
                 labelJ3.setBackground(null);
                 labelJ4.setBackground(null);
                 break;
             case 2:
-                labelJ2.setBackground(Color.CYAN);
+                labelJ2.setBackground(Color.PINK);
                 labelJ1.setBackground(null);
                 labelJ3.setBackground(null);
                 labelJ4.setBackground(null);
@@ -139,7 +222,7 @@ public class Plateau extends JFrame {
                  */
                 break;
             case 4:
-                labelJ4.setBackground(Color.CYAN);
+                labelJ4.setBackground(Color.RED);
                 labelJ2.setBackground(null);
                 labelJ3.setBackground(null);
                 labelJ1.setBackground(null);
@@ -164,7 +247,7 @@ public class Plateau extends JFrame {
             tourMsg = createLabel("");
             afficherTourMsg();
             cp.add(tourMsg,constraints(4,5,1,1,1,1));
-            labelJ1.setBackground(Color.CYAN);
+            labelJ1.setBackground(Color.YELLOW);
             initSymboleJoueur(cp,avancer);
             revalidate();
         });
@@ -176,7 +259,7 @@ public class Plateau extends JFrame {
     }
     public void dessinerCaseDé(Container cp, Avancer avancer) {
         ImageIcon imageIcon = new ImageIcon("./image/d2.png");
-        JButton dé = new JButton(imageIcon);
+        dé = new JButton(imageIcon);
         dé.setContentAreaFilled(false);
         add(dé, constraints(4, 3, 1, 1, 0, 0));
 
@@ -184,7 +267,7 @@ public class Plateau extends JFrame {
             De de = new De();
             chiffreDé = de.obtenirChiffre();
 
-            dessinerDé(cp);
+            DéMsg.setText(String.valueOf(chiffreDé));
             switch (tour) {
                 case 1:
                     System.out.println("joueur1 posActuel: " + j1.postionActuel);
@@ -192,6 +275,7 @@ public class Plateau extends JFrame {
                     System.out.println("joueur1 dé: " + chiffreDé);
                     avancer.setPositionJoueur(j1,chiffreDé);
                     avancer.deplacerSymbole(cp,j1,yellowTriangle,tour);
+                    verifierCase(j1);
                     break;
                 case 2:
                     System.out.println("joueur2 posActuel: " + j2.postionActuel);
@@ -199,6 +283,7 @@ public class Plateau extends JFrame {
                     System.out.println("joueur2 dé: " + chiffreDé);
                     avancer.setPositionJoueur(j2,chiffreDé);
                     avancer.deplacerSymbole(cp,j2,pinkSquare,tour);
+                    verifierCase(j1);
                     break;
                 case 3:
                     System.out.println("joueur3 posActuel: " + j3.postionActuel);
@@ -206,6 +291,7 @@ public class Plateau extends JFrame {
                     System.out.println("joueur3 dé: " + chiffreDé);
                     avancer.setPositionJoueur(j3,chiffreDé);
                     avancer.deplacerSymbole(cp,j3,blueCircle,tour);
+                    verifierCase(j1);
                     break;
                 case 4:
                     System.out.println("joueur4 posActuel: " + j4.postionActuel);
@@ -213,6 +299,7 @@ public class Plateau extends JFrame {
                     System.out.println("joueur4 dé: " + chiffreDé);
                     avancer.setPositionJoueur(j4,chiffreDé);
                     avancer.deplacerSymbole(cp,j4,redCross,tour);
+                    verifierCase(j1);
                     break;
             }
 
@@ -224,7 +311,7 @@ public class Plateau extends JFrame {
                 tour = 1;
             }
             afficherTourMsg();
-            DéMsg.setText(String.valueOf(chiffreDé));
+            dessinerDé(cp);
         });
     }
 
@@ -236,7 +323,7 @@ public class Plateau extends JFrame {
         pinkSquare = new DrawShap(Color.PINK);
         pinkSquare.setPreferredSize(new Dimension(30, 30));
 
-        blueCircle = new DrawShap(Color.BLUE);
+        blueCircle = new DrawShap(Color.CYAN);
         blueCircle.setPreferredSize(new Dimension(30, 30));
 
         redCross = new DrawShap(Color.RED);
@@ -246,6 +333,15 @@ public class Plateau extends JFrame {
         avancer.deplacerSymbole(cp,j3,blueCircle,3);
         avancer.deplacerSymbole(cp,j2,pinkSquare,2);
         avancer.deplacerSymbole(cp,j1,yellowTriangle,1);
+        TimelabelJ1 = createLabel("Time : " + j1.getPlayerTime());
+        TimelabelJ2 = createLabel("Time : " + j2.getPlayerTime());
+        TimelabelJ3 = createLabel("Time : " + j3.getPlayerTime());
+        TimelabelJ4 = createLabel("Time : " + j4.getPlayerTime());
+
+        cp.add(TimelabelJ1,constraints(8,1,1,1,1,1));
+        cp.add(TimelabelJ2,constraints(8,5,1,1,1,1));
+        cp.add(TimelabelJ3,constraints(0,1,1,1,1,1));
+        cp.add(TimelabelJ4,constraints(0,5,1,1,1,1));
 
     }
     public GridBagConstraints constraints(int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
@@ -265,7 +361,6 @@ public class Plateau extends JFrame {
         JLabel label = new JLabel(texte);
         label.setVerticalAlignment(SwingConstants.CENTER);
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         Font customFont = new Font("SansSerif", Font.BOLD, 15);
         label.setFont(customFont);
