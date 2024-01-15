@@ -19,11 +19,11 @@ public class DrawShap extends JPanel {
         // 设置绘制颜色
         g2d.setColor(color);
 
-        int width = 20;
-        int height = 20;
+        int width = getWidth();;
+        int height = getHeight();
 
         // 根据颜色和形状参数绘制不同的图形
-        if (color.equals(Color.YELLOW)) {
+        if (color.equals(Color.BLACK)) {
             // 绘制黄色的三角形
             int[] xPoints = {width / 2, width / 4, 3 * width / 4};
             int[] yPoints = {height / 4, 3 * height / 4, 3 * height / 4};

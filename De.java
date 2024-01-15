@@ -4,7 +4,7 @@ public class De {
     public int obtenirChiffre() {
         Random random = new Random();
 
-        return random.nextInt(1,12);
+        return random.nextInt(1,6);
 
     }
 }

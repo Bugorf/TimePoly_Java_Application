@@ -5,12 +5,12 @@ public class Joueur {
     private String playerColor;
     private int playerTime;
 
-    public int postionActuel;
+    public int postionActuel = 0;
+    public int positionPrecedent = 0;
     Map<Integer, Integer> playerCapital = new HashMap<>();
 
-    public Joueur(String playerColor, int playerTime) {
-        this.playerTime = playerTime;
-        this.playerColor = playerColor;
+    public Joueur() {
+        this.playerTime = 0;
 
     }
 
@@ -18,8 +18,8 @@ public class Joueur {
         return playerTime;
     }
 
-    public String getPlayerColor() {
-        return playerColor;
+    public void setPlayerTime(int playerTime) {
+        this.playerTime = playerTime;
     }
 
     public void AjouterCapital(int numeroCase, int time) {
