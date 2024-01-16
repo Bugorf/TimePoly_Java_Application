@@ -1,15 +1,27 @@
+import Jeux.Joueur;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Avancer {
+/**
+ * Class pour traiter et gérer les événements de déplacement
+ */
+public class Deplacement {
+
+    /**
+     * Dictionnaire des coordonnées des cases
+     */
     Map<Integer, int[]> posMap = new HashMap<>();
 
-    public Avancer() {
+    public Deplacement() {
         initPosMap();
     }
 
+    /**
+     * Obtenir tous les coordonnées des cases
+     */
     public void initPosMap() {
         ArrayList<int[]> al = new ArrayList<>();
 
@@ -56,7 +68,11 @@ public class Avancer {
         System.out.println(joueur.postionActuel);
     }
 
-    public void deplacerSymbole(Container cp, Joueur joueur, DrawShap symbole, int tour) {
+    /**
+     * Déplacement du symbole du joueur
+     */
+
+    public void deplacerSymbole(Container cp, Joueur joueur, DessinerGraphique symbole, int tour) {
         int[] pos = getPositionJoueur(joueur);
         GridBagConstraints c = new GridBagConstraints();
         switch (tour) {

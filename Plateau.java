@@ -1,10 +1,11 @@
+import Jeux.De;
+import Jeux.Joueur;
+import SpecialeCase.Chance;
+import SpecialeCase.Tresor;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Random;
 
 public class Plateau extends JFrame {
 
@@ -13,13 +14,13 @@ public class Plateau extends JFrame {
     JLabel tourMsg;
     int tour = 1;
     public Joueur j1;
-    DrawShap yellowTriangle;
+    DessinerGraphique yellowTriangle;
     public Joueur j2;
-    DrawShap pinkSquare;
+    DessinerGraphique pinkSquare;
     public Joueur j3;
-    DrawShap blueCircle;
+    DessinerGraphique blueCircle;
     public Joueur j4;
-    DrawShap redCross;
+    DessinerGraphique redCross;
 
     public JLabel labelJ1;
     public JLabel labelJ2;
@@ -44,36 +45,268 @@ public class Plateau extends JFrame {
         GridBagLayout bagLayout = new GridBagLayout();
         setLayout(bagLayout);
 
-        Avancer avancer = new Avancer();
+        Deplacement deplacement = new Deplacement();
 
-        initJoueur();
+        ImageIcon imageIcon = new ImageIcon("./image/Bienvenu.png");
+        JLabel imageLabel = new JLabel(imageIcon);
+        add(imageLabel, constraints(2,1,5,3,1,1));
+
         dessinerCase(cp);
-        dessinerCaseJoueurs(cp);
-        dessinerCaseDé(cp,avancer);
-        dessinerBtnStart(cp,avancer);
-
+        dessinerBtnStart(cp, deplacement, imageLabel);
         setVisible(true);
 
     }
+    public void dessinerBtnStart(Container cp, Deplacement deplacement, JLabel bienvenue) {
 
+        JButton jButton = new JButton("Start");
+        cp.add(jButton,constraints(4,5,1,1,1,1));
+        jButton.addActionListener(e -> {
+            remove(jButton);
+            remove(bienvenue);
+            tourMsg = createLabel("");
+            afficherTourMsg();
+            cp.add(tourMsg,constraints(4,5,1,1,1,1));
+
+            initJoueur();
+            dessinerCaseJoueurs(cp);
+            dessinerCaseDé(cp, deplacement);
+            dessinerBtnCotés();
+            dessinerChanceCase();
+            dessinerTresorCase();
+            dessinerDéResultatCase();
+
+            labelJ1.setBackground(Color.YELLOW);
+            initSymboleJoueur(cp, deplacement);
+            revalidate();
+        });
+
+
+    }
+    public void dessinerChanceCase() {
+        ImageIcon imageIcon = new ImageIcon("./image/wenhao.png");
+        JButton chance = new JButton(imageIcon);
+
+        chance.addActionListener(e ->{
+            new Chance().getChance(dé);
+        });
+
+        add(chance,constraints(2,2,1,3,0,0));
+    }
+    public void dessinerTresorCase() {
+        ImageIcon imageIcon2 = new ImageIcon("./image/tresor.png");
+        JButton evenement = new JButton(imageIcon2);
+
+        evenement.addActionListener(e ->{
+            new Tresor().getTresor(dé);
+        });
+
+
+        add(evenement,constraints(6,2,1,3,0,0));
+    }
+    public void dessinerBtnCotés() {
+        JButton recommence = new JButton("Recommencer");
+        JButton quitte = new JButton("Quitter");
+        add(recommence,constraints(0,3,1,1,0,0));
+        add(quitte,constraints(8,3,1,1,0,0));
+        recommence.addActionListener(e -> {
+            j1.setPlayerTime(0);
+            j2.setPlayerTime(0);
+            j3.setPlayerTime(0);
+            j4.setPlayerTime(0);
+
+            j1.postionActuel = 0;
+            j2.postionActuel = 0;
+            j3.postionActuel = 0;
+            j4.postionActuel = 0;
+
+            tour = 1;
+            revalidate();
+            repaint();
+        });
+
+        quitte.addActionListener(e -> {
+            System.exit(0);
+        });
+    }
+    public void dessinerDéResultatCase() {
+        DéMsg = createLabel("");
+        Font customFont = new Font("MonoSerif", Font.BOLD, 70);
+        DéMsg.setFont(customFont);
+        add(DéMsg,constraints(4,1,1,2,1,1));
+
+    }
+    public void dessinerCase(Container cp) {
+        Deplacement deplacement = new Deplacement();
+        deplacement.initPosMap();
+        for (int i = 0; i < 24; i++) {
+            if (i == 0) {
+                createImageLabel(cp, deplacement.posMap.get(i),"./image/go.png");
+            } else if (i == 6) {
+                createImageLabel(cp, deplacement.posMap.get(i),"./image/sun1.png");
+            } else if (i == 12) {
+                createImageLabel(cp, deplacement.posMap.get(i),"./image/sun2.png");
+            } else if ( i == 18) {
+                createImageLabel(cp, deplacement.posMap.get(i),"./image/ins.png");
+            } else if (i == 2 || i == 8 || i == 14 || i == 20) {
+                createImageLabel(cp, deplacement.posMap.get(i),"./image/tresorCase.png");
+            } else if (i == 4 || i == 10 || i == 16 || i == 22) {
+                createImageLabel(cp, deplacement.posMap.get(i),"./image/wenhaoCase.png");
+            } else if (i == 1 || i == 5 || i == 7 || i == 11 || i == 13 || i == 19 || i == 17 || i == 23 || i == 3 || i == 9 || i == 15 || i == 21 )  {
+                createImageLabel(cp, deplacement.posMap.get(i),"./image/house.png");
+            }
+
+        }
+    }
+
+    public void dessinerCaseJoueurs(Container cp) {
+        labelJ1 = createLabel("Joueur 1");
+        labelJ1.setOpaque(true);
+        labelJ2 = createLabel("Joueur 2");
+        labelJ2.setOpaque(true);
+        labelJ3 = createLabel("Joueur 3");
+        labelJ3.setOpaque(true);
+        labelJ4 = createLabel("Joueur 4");
+        labelJ4.setOpaque(true);
+
+        cp.add(labelJ1,constraints(8,0,1,1,1,1));
+        cp.add(labelJ2,constraints(8,6,1,1,1,1));
+        cp.add(labelJ3,constraints(0,0,1,1,1,1));
+        cp.add(labelJ4,constraints(0,6,1,1,1,1));
+
+    }
+
+    /**
+     * Méthode pour mettre en oeuvre le changement du couleur des joueurs selon l'ordre
+     */
+    public void ordreCouleur(Container cp) {
+        switch (tour) {
+            case 1:
+                labelJ1.setBackground(Color.YELLOW);
+                labelJ2.setBackground(null);
+                labelJ3.setBackground(null);
+                labelJ4.setBackground(null);
+                break;
+            case 2:
+                labelJ2.setBackground(Color.PINK);
+                labelJ1.setBackground(null);
+                labelJ3.setBackground(null);
+                labelJ4.setBackground(null);
+                break;
+            case 3:
+                labelJ3.setBackground(Color.CYAN);
+                labelJ2.setBackground(null);
+                labelJ1.setBackground(null);
+                labelJ4.setBackground(null);
+                break;
+            case 4:
+                labelJ4.setBackground(Color.RED);
+                labelJ2.setBackground(null);
+                labelJ3.setBackground(null);
+                labelJ1.setBackground(null);
+                break;
+        }
+    }
+
+    public void afficherTourMsg() {
+        tourMsg.setText("C'est le tour de joueur " + tour);
+    }
+    public void dessinerCaseDé(Container cp, Deplacement deplacement) {
+        ImageIcon imageIcon = new ImageIcon("./image/d2.png");
+        dé = new JButton(imageIcon);
+        dé.setContentAreaFilled(false);
+        add(dé, constraints(4, 3, 1, 1, 0, 0));
+
+        dé.addActionListener(e -> {
+            De de = new De();
+            chiffreDé = de.obtenirChiffre();
+
+            DéMsg.setText(String.valueOf(chiffreDé));
+            switch (tour) {
+                case 1:
+                    if (j1.suspendu || j1.getPlayerTime() < 0) {
+                        JOptionPane.showMessageDialog(dé, "Jeux.Joueur 1: Vous etre déjà mort ou en suspendu, veillez passez au prochain joueur", "Attention", JOptionPane.WARNING_MESSAGE);
+                        j1.suspendu = false;
+                    } else {
+                        System.out.println("joueur1 posActuel: " + j1.postionActuel);
+                        System.out.println("joueur1 posPrece: " + j1.positionPrecedent);
+                        System.out.println("joueur1 dé: " + chiffreDé);
+                        deplacement.setPositionJoueur(j1,chiffreDé);
+                        deplacement.deplacerSymbole(cp,j1,yellowTriangle,tour);
+                        verifierCase(j1);
+                    }
+
+                    break;
+                case 2:
+                    if (j2.suspendu || j2.getPlayerTime() < 0) {
+                        JOptionPane.showMessageDialog(dé, "Jeux.Joueur 2: Vous etre déjà mort, veillez passez au prochain joueur", "Attention", JOptionPane.WARNING_MESSAGE);
+                        j2.suspendu = false;
+                    } else {
+                        System.out.println("joueur2 posActuel: " + j2.postionActuel);
+                        System.out.println("joueur2 posPrece: " + j2.positionPrecedent);
+                        System.out.println("joueur2 dé: " + chiffreDé);
+                        deplacement.setPositionJoueur(j2,chiffreDé);
+                        deplacement.deplacerSymbole(cp,j2,pinkSquare,tour);
+                        verifierCase(j2);
+                    }
+
+                    break;
+                case 3:
+                    if (j3.suspendu || j3.getPlayerTime() < 0) {
+                        JOptionPane.showMessageDialog(dé, "Jeux.Joueur 3: Vous etre déjà mort, veillez passez au prochain joueur", "Attention", JOptionPane.WARNING_MESSAGE);tourMsg.setText("Jeux.Joueur 3: Vous etre déjà mort, veillez passez au prochain joueur");
+                        j3.suspendu = false;
+                    } else {
+                        System.out.println("joueur3 posActuel: " + j3.postionActuel);
+                        System.out.println("joueur3 posPrece: " + j3.positionPrecedent);
+                        System.out.println("joueur3 dé: " + chiffreDé);
+                        deplacement.setPositionJoueur(j3,chiffreDé);
+                        deplacement.deplacerSymbole(cp,j3,blueCircle,tour);
+                        verifierCase(j3);
+
+                    }
+                    break;
+                case 4:
+                    if (j4.suspendu || j4.getPlayerTime() < 0) {
+                        JOptionPane.showMessageDialog(dé, "Jeux.Joueur 4: Vous etre déjà mort, veillez passez au prochain joueur", "Attention", JOptionPane.WARNING_MESSAGE);
+                        j4.suspendu = false;
+                    } else {
+                        System.out.println("joueur4 posActuel: " + j4.postionActuel);
+                        System.out.println("joueur4 posPrece: " + j4.positionPrecedent);
+                        System.out.println("joueur4 dé: " + chiffreDé);
+                        deplacement.setPositionJoueur(j4,chiffreDé);
+                        deplacement.deplacerSymbole(cp,j4,redCross,tour);
+                        verifierCase(j4);
+
+                    }
+                    break;
+            }
+
+
+
+            if (tour < 4) {
+                tour += 1;
+            } else {
+                tour = 1;
+            }
+            afficherTourMsg();
+            ordreCouleur(cp);
+        });
+    }
     public void verifierCase(Joueur joueur) {
-        int[] tresor = {2,8,14,20};
-        int[] chance = {4,10,16,22};
+        int i = joueur.postionActuel;
 
-        if (containsValue(tresor, joueur.postionActuel)) {
+        if (joueur.postionActuel == 6 || joueur.postionActuel == 12 || joueur.postionActuel == 18) {
+            joueur.suspendu = true;
+        } else if (joueur.postionActuel == 0) {
             joueur.setPlayerTime(joueur.getPlayerTime() + new Tresor().getTresor(dé));
             actualiserTime(joueur);
-        } else if ((containsValue(chance, joueur.postionActuel))){
-            joueur.setPlayerTime(joueur.getPlayerTime() + new Chance().getChance(dé));
+        } else if (i == 2 || i == 8 || i == 14 || i == 20) {
+            joueur.setPlayerTime(joueur.getPlayerTime() + new Tresor().getTresor(dé));
             actualiserTime(joueur);
-        } else if (joueur.postionActuel == 6 || joueur.postionActuel == 12) {
-
-        } else if (joueur.postionActuel == 0) {
-
-        } else if (joueur.postionActuel == 18){
-
-        } else {
-
+        } else if (i == 4 || i == 10 || i == 16 || i == 22) {
+            joueur.setPlayerTime(joueur.getPlayerTime() + Integer.parseInt(new Chance().getChance(dé)));
+            actualiserTime(joueur);
+        } else if (i == 1 || i == 5 || i == 7 || i == 11 || i == 13 || i == 19 || i == 17 || i == 23 || i == 3 || i == 9 || i == 15 || i == 21 )  {
+            acheter(joueur);
         }
     }
 
@@ -94,245 +327,52 @@ public class Plateau extends JFrame {
         }
 
     }
-    private static boolean containsValue(int[] array, int target) {
-        for (int value : array) {
-            if (value == target) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public void createImageLabel(Container cp, int[] pos, String path) {
-        ImageIcon imageIcon = new ImageIcon(path);
-        JLabel jLabel = new JLabel(imageIcon);
-        jLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        cp.add(jLabel,constraints(pos[0],pos[1],1,1,1,1));
-    }
+    public void acheter(Joueur joueur) {
+        ImageIcon customIcon = new ImageIcon("./image/house.png");
+        int prix = new Random().nextInt(1,5);
+        Object[] options = {"Oui", "Non"};
+        int result = JOptionPane.showOptionDialog(
+                dé,
+                "Prix : " + prix + "\nVous voulez acheter cet appartement ?",
+                "Confirmation",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                customIcon,
+                options,
+                options[0]
+        );
 
-    public void dessinerCase(Container cp) {
-        Avancer avancer = new Avancer();
-        avancer.initPosMap();
-        for (int i = 0; i < 24; i++) {
-            if (i == 0) {
-                createImageLabel(cp,avancer.posMap.get(i),"./image/go.png");
-            } else if (i == 6) {
-                createImageLabel(cp,avancer.posMap.get(i),"./image/sun1.png");
-            } else if (i == 12) {
-                createImageLabel(cp,avancer.posMap.get(i),"./image/sun2.png");
-            } else if ( i == 18) {
-                createImageLabel(cp,avancer.posMap.get(i),"./image/ins.png");
-            } else if (i == 2 || i == 8 || i == 14 || i == 20) {
-                createImageLabel(cp,avancer.posMap.get(i),"./image/tresorCase.png");
-            } else if (i == 4 || i == 10 || i == 16 || i == 22) {
-                createImageLabel(cp,avancer.posMap.get(i),"./image/wenhaoCase.png");
-            } else if (i == 1 || i == 5 || i == 7 || i == 11 || i == 13 || i == 19 || i == 17 || i == 23 || i == 3 || i == 9 || i == 15 || i == 21 )  {
-                createImageLabel(cp,avancer.posMap.get(i),"./image/house.png");
-            }
-
-        }
-
-
-
-        DéMsg = createLabel("");
-        cp.add(DéMsg,constraints(4,1,1,2,1,1));
-
-        ImageIcon imageIcon = new ImageIcon("./image/wenhao.png");
-        JButton chance = new JButton(imageIcon);
-        chance.setBorder(null);
-
-        chance.setBackground(null);
-
-        chance.addActionListener(e ->{
-            new Chance().getChance(dé);
-        });
-
-
-        ImageIcon imageIcon2 = new ImageIcon("./image/tresor.png");
-        JButton evenement = new JButton(imageIcon2);
-
-        evenement.addActionListener(e ->{
-            new Tresor().getTresor(dé);
-        });
-
-        add(chance,constraints(2,2,1,3,0,0));
-        add(evenement,constraints(6,2,1,3,0,0));
-    }
-
-    public void dessinerCaseJoueurs(Container cp) {
-        labelJ1 = createLabel("Joueur 1");
-        labelJ1.setOpaque(true);
-        labelJ2 = createLabel("Joueur 2");
-        labelJ2.setOpaque(true);
-        labelJ3 = createLabel("Joueur 3");
-        labelJ3.setOpaque(true);
-        labelJ4 = createLabel("Joueur 4");
-        labelJ4.setOpaque(true);
-
-        cp.add(labelJ1,constraints(8,0,1,1,1,1));
-        cp.add(labelJ2,constraints(8,6,1,1,1,1));
-        cp.add(labelJ3,constraints(0,0,1,1,1,1));
-        cp.add(labelJ4,constraints(0,6,1,1,1,1));
-
-    }
-
-    public void dessinerDé(Container cp) {
-        ImageIcon imageIcon = new ImageIcon("./image/d2.png");
-        JLabel jLabel = new JLabel(imageIcon);
-        jLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabel.setVerticalAlignment(SwingConstants.CENTER);
-        switch (tour) {
-            case 1:
-                /*
-                cp.add(createLabel("o"),constraints(8,2,1,1,1,1));
-                cp.add(createLabel(""),constraints(8,4,1,1,1,1));
-                cp.add(createLabel(""),constraints(0,2,1,1,1,1));
-                cp.add(createLabel(""),constraints(0,4,1,1,1,1));
-
-                 */
-                labelJ1.setBackground(Color.YELLOW);
-                labelJ2.setBackground(null);
-                labelJ3.setBackground(null);
-                labelJ4.setBackground(null);
-                break;
-            case 2:
-                labelJ2.setBackground(Color.PINK);
-                labelJ1.setBackground(null);
-                labelJ3.setBackground(null);
-                labelJ4.setBackground(null);
-                /*
-                cp.add(createLabel("o"),constraints(8,4,1,1,1,1));
-                cp.add(createLabel(""),constraints(8,2,1,1,1,1));
-                cp.add(createLabel(""),constraints(0,2,1,1,1,1));
-                cp.add(createLabel(""),constraints(0,4,1,1,1,1));
-
-                 */
-                break;
-            case 3:
-                labelJ3.setBackground(Color.CYAN);
-                labelJ2.setBackground(null);
-                labelJ1.setBackground(null);
-                labelJ4.setBackground(null);
-                /*
-                cp.add(createLabel("o"),constraints(0,2,1,1,1,1));
-                cp.add(createLabel(""),constraints(8,4,1,1,1,1));
-                cp.add(createLabel(""),constraints(8,2,1,1,1,1));
-                cp.add(createLabel(""),constraints(0,4,1,1,1,1));
-
-                 */
-                break;
-            case 4:
-                labelJ4.setBackground(Color.RED);
-                labelJ2.setBackground(null);
-                labelJ3.setBackground(null);
-                labelJ1.setBackground(null);
-                /*
-                cp.add(createLabel("o"),constraints(0,4,1,1,1,1));
-                cp.add(createLabel(""),constraints(8,4,1,1,1,1));
-                cp.add(createLabel(""),constraints(8,2,1,1,1,1));
-                cp.add(createLabel(""),constraints(0,2,1,1,1,1));
-
-                 */
-                break;
-        }
-    }
-
-    public void dessinerBtnStart(Container cp, Avancer avancer) {
-
-        JButton jButton = new JButton("Start");
-        cp.add(jButton,constraints(4,5,1,1,1,1));
-        jButton.addActionListener(e -> {
-            remove(jButton);
-
-            tourMsg = createLabel("");
-            afficherTourMsg();
-            cp.add(tourMsg,constraints(4,5,1,1,1,1));
-            labelJ1.setBackground(Color.YELLOW);
-            initSymboleJoueur(cp,avancer);
-            revalidate();
-        });
-
-
-    }
-    public void afficherTourMsg() {
-        tourMsg.setText("C'est le tour de joueur " + tour);
-    }
-    public void dessinerCaseDé(Container cp, Avancer avancer) {
-        ImageIcon imageIcon = new ImageIcon("./image/d2.png");
-        dé = new JButton(imageIcon);
-        dé.setContentAreaFilled(false);
-        add(dé, constraints(4, 3, 1, 1, 0, 0));
-
-        dé.addActionListener(e -> {
-            De de = new De();
-            chiffreDé = de.obtenirChiffre();
-
-            DéMsg.setText(String.valueOf(chiffreDé));
-            switch (tour) {
-                case 1:
-                    System.out.println("joueur1 posActuel: " + j1.postionActuel);
-                    System.out.println("joueur1 posPrece: " + j1.positionPrecedent);
-                    System.out.println("joueur1 dé: " + chiffreDé);
-                    avancer.setPositionJoueur(j1,chiffreDé);
-                    avancer.deplacerSymbole(cp,j1,yellowTriangle,tour);
-                    verifierCase(j1);
-                    break;
-                case 2:
-                    System.out.println("joueur2 posActuel: " + j2.postionActuel);
-                    System.out.println("joueur2 posPrece: " + j2.positionPrecedent);
-                    System.out.println("joueur2 dé: " + chiffreDé);
-                    avancer.setPositionJoueur(j2,chiffreDé);
-                    avancer.deplacerSymbole(cp,j2,pinkSquare,tour);
-                    verifierCase(j1);
-                    break;
-                case 3:
-                    System.out.println("joueur3 posActuel: " + j3.postionActuel);
-                    System.out.println("joueur3 posPrece: " + j3.positionPrecedent);
-                    System.out.println("joueur3 dé: " + chiffreDé);
-                    avancer.setPositionJoueur(j3,chiffreDé);
-                    avancer.deplacerSymbole(cp,j3,blueCircle,tour);
-                    verifierCase(j1);
-                    break;
-                case 4:
-                    System.out.println("joueur4 posActuel: " + j4.postionActuel);
-                    System.out.println("joueur4 posPrece: " + j4.positionPrecedent);
-                    System.out.println("joueur4 dé: " + chiffreDé);
-                    avancer.setPositionJoueur(j4,chiffreDé);
-                    avancer.deplacerSymbole(cp,j4,redCross,tour);
-                    verifierCase(j1);
-                    break;
-            }
-
-
-
-            if (tour < 4) {
-                tour += 1;
+        if (result == JOptionPane.YES_OPTION) {
+            if (joueur.getPlayerTime() < prix){
+                JOptionPane.showMessageDialog(dé, "Votre Time est insuffisant", "Attention", JOptionPane.WARNING_MESSAGE);
             } else {
-                tour = 1;
+                joueur.ajouterCapital(joueur.postionActuel,prix);
             }
-            afficherTourMsg();
-            dessinerDé(cp);
-        });
+        }
     }
+    public void initSymboleJoueur(Container cp, Deplacement deplacement) {
 
-    public void initSymboleJoueur(Container cp, Avancer avancer) {
-
-        yellowTriangle = new DrawShap(Color.BLACK);
+        yellowTriangle = new DessinerGraphique(Color.BLACK);
         yellowTriangle.setPreferredSize(new Dimension(30, 30));
 
-        pinkSquare = new DrawShap(Color.PINK);
+        pinkSquare = new DessinerGraphique(Color.PINK);
         pinkSquare.setPreferredSize(new Dimension(30, 30));
 
-        blueCircle = new DrawShap(Color.CYAN);
+        blueCircle = new DessinerGraphique(Color.CYAN);
         blueCircle.setPreferredSize(new Dimension(30, 30));
 
-        redCross = new DrawShap(Color.RED);
+        redCross = new DessinerGraphique(Color.RED);
         redCross.setPreferredSize(new Dimension(30, 30));
 
-        avancer.deplacerSymbole(cp,j4,redCross,4);
-        avancer.deplacerSymbole(cp,j3,blueCircle,3);
-        avancer.deplacerSymbole(cp,j2,pinkSquare,2);
-        avancer.deplacerSymbole(cp,j1,yellowTriangle,1);
+        deplacement.deplacerSymbole(cp,j4,redCross,4);
+        deplacement.deplacerSymbole(cp,j3,blueCircle,3);
+        deplacement.deplacerSymbole(cp,j2,pinkSquare,2);
+        deplacement.deplacerSymbole(cp,j1,yellowTriangle,1);
+
+        initTimeLabel(cp);
+    }
+    public void initTimeLabel(Container cp) {
         TimelabelJ1 = createLabel("Time : " + j1.getPlayerTime());
         TimelabelJ2 = createLabel("Time : " + j2.getPlayerTime());
         TimelabelJ3 = createLabel("Time : " + j3.getPlayerTime());
@@ -342,7 +382,12 @@ public class Plateau extends JFrame {
         cp.add(TimelabelJ2,constraints(8,5,1,1,1,1));
         cp.add(TimelabelJ3,constraints(0,1,1,1,1,1));
         cp.add(TimelabelJ4,constraints(0,5,1,1,1,1));
-
+    }
+    public void initJoueur() {
+        j1 = new Joueur();
+        j2 = new Joueur();
+        j3 = new Joueur();
+        j4 = new Joueur();
     }
     public GridBagConstraints constraints(int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty) {
         GridBagConstraints constraints = new GridBagConstraints();
@@ -356,7 +401,6 @@ public class Plateau extends JFrame {
 
         return constraints;
     }
-
     public JLabel createLabel(String texte) {
         JLabel label = new JLabel(texte);
         label.setVerticalAlignment(SwingConstants.CENTER);
@@ -364,16 +408,21 @@ public class Plateau extends JFrame {
 
         Font customFont = new Font("SansSerif", Font.BOLD, 15);
         label.setFont(customFont);
-
         return label;
     }
 
+    /**
+     * Class pour créer des label avec image
+     */
+    public void createImageLabel(Container cp, int[] pos, String path) {
+        ImageIcon imageIcon = new ImageIcon(path);
+        JLabel jLabel = new JLabel(imageIcon);
+        jLabel.setBackground(Color.WHITE);
+        jLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-    public void initJoueur() {
-        j1 = new Joueur();
-        j2 = new Joueur();
-        j3 = new Joueur();
-        j4 = new Joueur();
+        cp.add(jLabel,constraints(pos[0],pos[1],1,1,1,1));
     }
+
+
 
 }
