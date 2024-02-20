@@ -1,4 +1,4 @@
-# Time Poly - Un jeux comme Monopoly développé en Java
+# $$\mathcal{\color{red}{Time\ Poly\- Un \ jeux \ comme \ Monopoly \ développé \ en \ Java}}$$ 
 
 ## 👀 Video demo
 
